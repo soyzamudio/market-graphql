@@ -1,6 +1,7 @@
 import PopularBrands from './data/popular-brands';
 import TrendingBrands from './data/trending-brands';
 import PopularStyles from './data/popular-styles';
+import Products from './data/products';
 import filter from 'lodash/filter';
 
 import {
@@ -45,9 +46,66 @@ const PopularStyleType = new GraphQLObjectType({
     }),
 });
 
-const TodoQueryRootType = new GraphQLObjectType({
-    name: 'TodoAppSchema',
-    description: 'Root Todo App Schema',
+const BrandType = new GraphQLObjectType({
+    name: 'BrandType',
+    description: 'Brand model',
+    fields: () => ({
+        id: { type: new GraphQLNonNull(GraphQLInt) },
+        name: { type: new GraphQLNonNull(GraphQLString) },
+    }),
+});
+
+const ColorType = new GraphQLObjectType({
+    name: 'ColorType',
+    description: 'Color model',
+    fields: () => ({
+        id: { type: new GraphQLNonNull(GraphQLInt) },
+        hex: { type: new GraphQLNonNull(GraphQLString) },
+        name: { type: new GraphQLNonNull(GraphQLString) },
+    }),
+});
+
+const SizeType = new GraphQLObjectType({
+    name: 'SizeType',
+    description: 'Size model',
+    fields: () => ({
+        id: { type: new GraphQLNonNull(GraphQLInt) },
+        name: { type: new GraphQLNonNull(GraphQLString) },
+    })
+})
+
+const ImageType = new GraphQLObjectType({
+    name: 'ImageType',
+    description: 'Image model',
+    fields: () => ({
+        small: { type: GraphQLString },
+        medium: { type: GraphQLString },
+        large: { type: GraphQLString },
+        retina: { type: GraphQLString },
+    }),
+});
+
+const ProductType = new GraphQLObjectType({
+    name: 'ProducType',
+    description: 'Product model',
+    fields: () => ({
+        id: { type: new GraphQLNonNull(GraphQLInt) },
+        title: { type: new GraphQLNonNull(GraphQLString) },
+        price: { type: new GraphQLNonNull(GraphQLInt) },
+        priceLabel: { type: new GraphQLNonNull(GraphQLString) },
+        // brand: { type: new GraphQLNonNull(BrandType) },
+        // colors: { type: new GraphQLList(ColorType) },
+        // sizes: { type: new GraphQLList(SizeType) },
+        favoriteCount: { type: GraphQLInt },
+        retailerId: { type: GraphQLInt },
+        // images: { type: ImageType },
+        condition: { type: GraphQLString },
+    }),
+});
+
+const PoshQueryRootType = new GraphQLObjectType({
+    name: 'PoshAppSchema',
+    description: 'Root Posh App Schema',
     fields: () => ({
         popularBrands: {
             args: {
@@ -96,11 +154,34 @@ const TodoQueryRootType = new GraphQLObjectType({
                 return TrendingBrands
             },
         },
+        products: {
+            args: {
+                // title: { type: GraphQLString },
+                // price: { type: GraphQLInt },
+                // priceLabel: { type: GraphQLString },
+                // brand: { type: BrandType },
+                // colors: { type: new GraphQLList(ColorType) },
+                // sizes: { type: new GraphQLList(SizeType) },
+                // favoriteCount: { type: GraphQLInt },
+                // retailerId: { type: GraphQLInt },
+                // // images: { type: ImageType },
+                // condition: { type: GraphQLString },
+            },
+            type: new GraphQLList(ProductType),
+            description: 'List of Products',
+            resolve: (parent, args) => {
+                if (Object.keys(args).length) {
+                    return filter(Products, args);
+                }
+
+                return Products
+            },
+        },
     }),
 });
 
 const schema = new GraphQLSchema({
-    query: TodoQueryRootType,
+    query: PoshQueryRootType,
 });
 
 export default schema;
